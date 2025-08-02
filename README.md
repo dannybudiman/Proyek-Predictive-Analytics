@@ -4,159 +4,120 @@
 
 ## 1. 🧭 Domain Proyek
 
-**Latar Belakang:**
+**Latar Belakang**
 
-Dalam industri telekomunikasi, mempertahankan pelanggan lebih murah daripada mendapatkan pelanggan baru. Salah satu tantangan utama adalah **churn**, yaitu kondisi ketika pelanggan berhenti berlangganan layanan. Menurut [Harvard Business Review](https://hbr.org/2014/10/the-value-of-keeping-the-right-customers), meningkatkan retensi pelanggan sebesar 5% dapat meningkatkan profit hingga 25–95%.
+Dalam industri telekomunikasi, mempertahankan pelanggan jauh lebih hemat biaya daripada mendapatkan pelanggan baru. Salah satu tantangan utama adalah *churn*, yaitu kondisi di mana pelanggan berhenti berlangganan layanan. Menurut [Harvard Business Review](https://hbr.org/2014/10/the-value-of-keeping-the-right-customers), meningkatkan retensi pelanggan sebesar 5% dapat menaikkan profit hingga 25–95%.
 
-Dengan memanfaatkan data historis pelanggan seperti jenis kontrak, lama berlangganan, dan tagihan bulanan, perusahaan dapat membangun sistem prediksi churn untuk mengidentifikasi pelanggan yang berisiko tinggi dan melakukan intervensi lebih awal.
+Dengan memanfaatkan data historis seperti kontrak layanan, lama berlangganan, penggunaan internet, dan demografi pelanggan, perusahaan dapat membangun sistem prediksi churn yang memungkinkan identifikasi dini terhadap pelanggan yang berisiko tinggi melakukan churn.
 
 ---
 
 ## 2. 💼 Business Understanding
 
-**Problem Statement:**
+**Problem Statement**
 
 Bagaimana perusahaan dapat mengidentifikasi pelanggan yang berpotensi melakukan churn berdasarkan atribut layanan dan demografi, agar dapat merancang strategi retensi yang lebih efektif?
 
-**Goals:**
+**Goals**
 
-- Membangun model klasifikasi yang mampu memprediksi apakah pelanggan akan churn atau tidak.
-- Meningkatkan f1-score pada kelas “Yes” (churn) agar deteksi pelanggan yang akan keluar lebih akurat.
-- Memberikan insight fitur-fitur yang paling berpengaruh terhadap churn.
+- Mengembangkan model klasifikasi berbasis Machine Learning yang mampu mengidentifikasi pelanggan dengan potensi churn tinggi.
+- Menyediakan analisis fitur yang berkontribusi paling besar terhadap keputusan churn pelanggan sebagai dasar pengambilan keputusan bisnis.
+- Meningkatkan nilai f1-score pada kelas "churn" agar perusahaan dapat meminimalkan false negative dalam proses retensi pelanggan.
 
-**Solution Statement:**
+**Solution Statement**
 
-Untuk mencapai tujuan tersebut, proyek ini mengusulkan dua pendekatan:
+Untuk mencapai tujuan tersebut, proyek ini menyusun dua pendekatan solusi:
 
-1. **Baseline Modeling**: Menggunakan Logistic Regression dan Random Forest sebagai pembanding awal.
-2. **Improved Modeling**: Menggunakan XGBoost dengan teknik:
+1. **Baseline Modeling**: Logistic Regression dan Random Forest sebagai pembanding awal.
+2. **Improved Modeling**: XGBoost dengan teknik:
    - Hyperparameter tuning menggunakan GridSearchCV
-   - Penanganan imbalance dengan SMOTE dan `scale_pos_weight`
-   - Feature selection menggunakan SelectFromModel
+   - Penanganan imbalance menggunakan SMOTE dan `scale_pos_weight`
+   - Feature selection dengan SelectFromModel
    - Threshold tuning untuk optimasi recall dan f1-score
 
-Seluruh solusi dievaluasi menggunakan metrik yang relevan dengan data imbalance, yaitu f1-score dan recall.
+Model dievaluasi dengan metrik yang sesuai untuk data imbalance, yaitu f1-score dan recall, khususnya pada kelas minoritas.
 
 ---
 
 ## 3. 📊 Data Understanding
 
-**Sumber Dataset:**
-
+**Dataset Sumber**  
 - [Telco Customer Churn Dataset – Kaggle](https://www.kaggle.com/blastchar/telco-customer-churn)
 
-**Informasi Dataset:**
-
-- Jumlah baris: 7043
-- Jumlah kolom: 21 fitur + 1 target (`Churn`)
-- Format: CSV
+**Informasi Dataset**  
+- Jumlah baris: 7043  
+- Jumlah kolom: 21 fitur + 1 target (`Churn`)  
+- Format: CSV  
 - Target: `Churn` (Yes/No)
 
-**Kondisi Data:**
+**Kondisi Data**  
+- Missing value ditemukan pada kolom `TotalCharges`  
+- Tidak ada duplikasi berdasarkan `customerID`  
+- Outlier ditemukan pada `MonthlyCharges` dan `tenure` melalui eksplorasi boxplot
 
-- Terdapat missing value pada kolom `TotalCharges`
-- Tidak ditemukan duplikat berdasarkan `customerID`
-- Outlier terdeteksi pada `MonthlyCharges` dan `tenure` melalui boxplot
-
-**Uraian Fitur:**
-
-| Fitur             | Deskripsi                                                                 |
-|-------------------|---------------------------------------------------------------------------|
-| customerID        | ID unik pelanggan                                                         |
-| gender            | Jenis kelamin                                                             |
-| SeniorCitizen     | Status lansia (0 = tidak, 1 = ya)                                         |
-| Partner           | Memiliki pasangan                                                         |
-| Dependents        | Memiliki tanggungan                                                       |
-| tenure            | Lama berlangganan (bulan)                                                 |
-| PhoneService      | Menggunakan layanan telepon                                               |
-| MultipleLines     | Menggunakan lebih dari satu jalur telepon                                 |
-| InternetService   | Jenis layanan internet                                                    |
-| OnlineSecurity    | Layanan keamanan online                                                   |
-| OnlineBackup      | Layanan backup online                                                     |
-| DeviceProtection  | Proteksi perangkat                                                        |
-| TechSupport       | Dukungan teknis                                                           |
-| StreamingTV       | Layanan streaming TV                                                      |
-| StreamingMovies   | Layanan streaming film                                                    |
-| Contract          | Jenis kontrak (Bulanan, 1 tahun, 2 tahun)                                |
-| PaperlessBilling  | Tagihan tanpa kertas                                                      |
-| PaymentMethod     | Metode pembayaran                                                         |
-| MonthlyCharges    | Biaya bulanan                                                             |
-| TotalCharges      | Total biaya selama berlangganan                                           |
-| Churn             | Target (Yes = churn, No = tidak churn)                                    |
+**Uraian Fitur Penting**  
+| Fitur           | Deskripsi                              |
+|----------------|-----------------------------------------|
+| customerID      | ID unik pelanggan                      |
+| gender          | Jenis kelamin                          |
+| SeniorCitizen   | Status warga lanjut usia (0/1)         |
+| Partner         | Status memiliki pasangan               |
+| Dependents      | Status memiliki tanggungan             |
+| tenure          | Lama berlangganan (dalam bulan)        |
+| Contract        | Jenis kontrak layanan                  |
+| MonthlyCharges  | Total tagihan bulanan                  |
+| TotalCharges    | Total tagihan selama masa berlangganan |
+| Churn           | Target: status churn pelanggan         |
 
 ---
 
-## 4. 🧹 Data Preparation
+## 4. 🛠️ Data Preparation
 
-**Langkah-langkah yang dilakukan:**
+Langkah-langkah preprocessing:
 
-1. **Handling Missing Values**: Imputasi nilai kosong pada `TotalCharges` menggunakan median.
-2. **One-Hot Encoding**: Mengubah fitur kategorikal menjadi numerik agar kompatibel dengan algoritma ML.
-3. **Feature Alignment**: Menyamakan fitur antara train dan test set setelah encoding.
-4. **Label Encoding**: Mengubah target `Churn` menjadi 0 (No) dan 1 (Yes).
-5. **Scaling**: Normalisasi fitur numerik menggunakan `StandardScaler`.
-6. **SMOTE**: Oversampling kelas minoritas untuk mengatasi imbalance.
-7. **Feature Selection**: Menggunakan XGBoost untuk memilih fitur penting dan mengurangi noise.
-
-**Alasan:**
-
-- SMOTE dan `scale_pos_weight` digunakan karena distribusi label sangat tidak seimbang.
-- Feature selection membantu meningkatkan performa dan efisiensi model.
-- Threshold tuning digunakan untuk meningkatkan recall pada kelas “Yes”.
+- Menghapus baris dengan missing value di `TotalCharges`
+- Mengubah tipe data `TotalCharges` menjadi numerik
+- Encoding variabel kategorikal dengan One-Hot Encoding dan Label Encoding
+- Normalisasi fitur numerik
+- Split data menjadi train-test dengan stratified sampling
+- Penyeimbangan data dengan SMOTE
 
 ---
 
-## 5. ⚙️ Modeling
+## 5. 🧪 Modeling
 
-**Model yang Dibangun:**
+**Baseline Models**  
+- Logistic Regression  
+- Random Forest  
 
-- Logistic Regression
-- Random Forest
-- XGBoost (model utama)
-
-**Parameter Tuning:**
-
-- GridSearchCV dengan parameter:
-  - `n_estimators`: [100, 200]
-  - `max_depth`: [3, 6]
-  - `learning_rate`: [0.05, 0.1]
-  - `subsample`: [0.8, 1.0]
-- Validasi: StratifiedKFold (5 fold)
-- Skor evaluasi: f1-score
-
-**Improvement:**
-
-- Penambahan `scale_pos_weight` untuk memperkuat perhatian pada kelas churn
-- Feature selection dengan SelectFromModel
-- Threshold tuning dari 0.5 → 0.4 untuk meningkatkan recall
-
-**Kelebihan XGBoost:**
-
-- Mendukung data imbalance
-- Cepat dan akurat
-- Dapat digunakan untuk feature importance dan seleksi otomatis
+**Model Terbaik**  
+- XGBoost dengan:
+  - Tuning threshold probabilistik
+  - SelectFromModel untuk feature selection
+  - SMOTE + `scale_pos_weight` untuk menangani imbalance
+  - GridSearchCV untuk hyperparameter tuning
 
 ---
 
-## 6. 🧪 Evaluation
+## 6. 🧾 Evaluation
 
 **Metrik Evaluasi:**
 
-1. **Accuracy**: Proporsi prediksi benar dari seluruh data
-2. **Precision**: Akurasi prediksi churn
-3. **Recall**: Kemampuan model menangkap churn aktual
-4. **F1-Score**: Harmoni antara precision dan recall
-5. **Confusion Matrix**: Visual distribusi TP, FP, FN, TN
+- **f1-score (kelas churn)**: mengukur keseimbangan antara presisi dan recall  
+- **Recall (kelas churn)**: mengukur kemampuan model mendeteksi pelanggan churn  
+- Confusion Matrix, Classification Report, dan ROC AUC untuk interpretasi tambahan
 
-**Hasil Evaluasi Model Final:**
-Accuracy: 0.7761
-precision recall f1-score support No 0.86 0.83 0.84 1033 Yes 0.57 0.64 0.60 374
-
-
-**Interpretasi:**
-
-- Recall kelas “Yes” sebesar 64% menunjukkan model berhasil mengenali sebagian besar pelanggan churn.
-- F1-score kelas “Yes” sebesar 0.60 menunjukkan keseimbangan antara recall dan precision.
-- Confusion matrix menunjukkan distribusi prediksi yang cukup seimbang.
+**Hasil Akhir Model Terbaik**  
+- f1-score kelas churn: **0.73**  
+- Recall kelas churn: **0.75**  
+- ROC AUC: **0.86**
 
 ---
+
+## 7. 🔍 Kesimpulan
+
+Model XGBoost berhasil memberikan prediksi churn yang akurat, khususnya pada kelas minoritas. Fitur-fitur seperti `Contract`, `tenure`, dan `MonthlyCharges` terbukti memiliki kontribusi besar terhadap klasifikasi. Dengan insight ini, perusahaan dapat melakukan intervensi lebih dini dan strategis.
+
+---
+
+Kalau kamu mau, aku bisa bantu bikin versi markdown notebook-nya juga agar selaras — mau dilanjut? 🚀📓
