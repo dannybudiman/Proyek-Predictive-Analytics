@@ -41,35 +41,71 @@ Model dievaluasi dengan metrik yang sesuai untuk data imbalance, yaitu f1-score 
 
 ## 3. 📊 Data Understanding
 
-**Dataset Sumber**  
-- [Telco Customer Churn Dataset – Kaggle](https://www.kaggle.com/blastchar/telco-customer-churn)
-
-**Informasi Dataset**  
-- Jumlah baris: 7043  
-- Jumlah kolom: 21 fitur + 1 target (`Churn`)  
-- Format: CSV  
-- Target: `Churn` (Yes/No)
-
-**Kondisi Data**  
-- Missing value ditemukan pada kolom `TotalCharges`  
-- Tidak ada duplikasi berdasarkan `customerID`  
-- Outlier ditemukan pada `MonthlyCharges` dan `tenure` melalui eksplorasi boxplot
-
-**Uraian Fitur Penting**  
-| Fitur           | Deskripsi                              |
-|----------------|-----------------------------------------|
-| customerID      | ID unik pelanggan                      |
-| gender          | Jenis kelamin                          |
-| SeniorCitizen   | Status warga lanjut usia (0/1)         |
-| Partner         | Status memiliki pasangan               |
-| Dependents      | Status memiliki tanggungan             |
-| tenure          | Lama berlangganan (dalam bulan)        |
-| Contract        | Jenis kontrak layanan                  |
-| MonthlyCharges  | Total tagihan bulanan                  |
-| TotalCharges    | Total tagihan selama masa berlangganan |
-| Churn           | Target: status churn pelanggan         |
+Tahapan ini bertujuan untuk memahami karakteristik data yang digunakan dalam proyek, termasuk jumlah data, struktur fitur, kondisi data secara umum, dan sumber data yang menjadi rujukan.
 
 ---
+
+### 🔗 Sumber Dataset
+
+Dataset yang digunakan berasal dari [Telco Customer Churn Dataset – Kaggle](https://www.kaggle.com/blastchar/telco-customer-churn). Dataset ini berisi informasi pelanggan perusahaan telekomunikasi yang mencakup profil demografi, jenis layanan yang digunakan, dan status apakah pelanggan melakukan churn atau tidak.
+
+---
+
+### 📏 Informasi Jumlah Data
+
+- Jumlah baris (data pelanggan): **7,043**  
+- Jumlah kolom: **21 fitur** + **1 target (`Churn`)**  
+- Format dataset: **CSV**
+
+---
+
+### 📋 Kondisi Data
+
+Selama eksplorasi awal, berikut adalah kondisi data yang ditemukan:
+
+- **Missing Value**
+  - Terdapat nilai kosong pada kolom `TotalCharges` yang perlu ditangani pada tahap Data Preparation.
+  
+- **Duplikasi**
+  - Tidak ditemukan duplikasi data berdasarkan `customerID`, sehingga setiap baris mewakili pelanggan yang unik.
+
+- **Outlier**
+  - Potensi outlier terdeteksi pada fitur numerik seperti `MonthlyCharges` dan `tenure`, berdasarkan visualisasi boxplot dan distribusi histogram.
+
+---
+
+### 📌 Uraian Fitur Dataset
+
+Berikut adalah penjelasan seluruh fitur yang tersedia:
+
+| Nama Fitur        | Deskripsi                                                                                |
+|-------------------|-------------------------------------------------------------------------------------------|
+| customerID        | ID unik untuk setiap pelanggan                                                            |
+| gender            | Jenis kelamin pelanggan (`Male`, `Female`)                                                |
+| SeniorCitizen     | Status pelanggan sebagai warga lanjut usia (`0`: bukan, `1`: ya)                          |
+| Partner           | Status apakah pelanggan memiliki pasangan                                                 |
+| Dependents        | Status apakah pelanggan memiliki tanggungan (anak, orang tua)                             |
+| tenure            | Lama waktu pelanggan telah berlangganan (dalam bulan)                                     |
+| PhoneService      | Status apakah pelanggan menggunakan layanan telepon                                       |
+| MultipleLines     | Apakah pelanggan memiliki lebih dari satu jalur telepon                                   |
+| InternetService   | Jenis layanan internet yang digunakan (`DSL`, `Fiber optic`, `No`)                        |
+| OnlineSecurity    | Status apakah pelanggan berlangganan layanan keamanan internet                            |
+| OnlineBackup      | Status layanan backup online                                                              |
+| DeviceProtection  | Status proteksi perangkat yang digunakan pelanggan                                        |
+| TechSupport       | Status apakah pelanggan mendapatkan dukungan teknis                                       |
+| StreamingTV       | Status apakah pelanggan menggunakan layanan streaming TV                                  |
+| StreamingMovies   | Status apakah pelanggan menggunakan layanan streaming film                                |
+| Contract          | Jenis kontrak layanan pelanggan (`Month-to-month`, `One year`, `Two year`)               |
+| PaperlessBilling  | Status penggunaan tagihan digital                                                         |
+| PaymentMethod     | Metode pembayaran yang digunakan pelanggan                                                |
+| MonthlyCharges    | Jumlah tagihan bulanan pelanggan                                                          |
+| TotalCharges      | Total tagihan yang telah dibayarkan selama masa berlangganan                              |
+| Churn             | Target: apakah pelanggan keluar (`Yes`) atau tetap menggunakan layanan (`No`)             |
+
+---
+
+📌 *Catatan:* Dataset ini hanya terdiri dari satu file utama (`WA_Fn-UseC_-Telco-Customer-Churn.csv`), sehingga tidak ada kebutuhan penjelasan untuk dataset lain.
+
 
 ## 4. 🛠️ Data Preparation
 
