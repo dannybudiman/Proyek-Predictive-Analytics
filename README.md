@@ -1,78 +1,143 @@
-# 📊 Submission Proyek Predictive Analytics – Telco Customer Churn
-
-## 🧭 Latar Belakang
-
-Customer churn adalah masalah kritis bagi perusahaan telekomunikasi. Kehilangan pelanggan berdampak langsung pada pendapatan dan biaya akuisisi pelanggan baru bisa jauh lebih besar dibanding mempertahankan pelanggan lama (Frederick Reichheld, Bain & Company). Dengan memanfaatkan data historis, kita dapat membangun model prediksi yang membantu tim bisnis melakukan intervensi sebelum pelanggan benar-benar churn.
-
-**Referensi:**
-- [Harvard Business Review – The Value of Keeping the Right Customers](https://hbr.org/2014/10/the-value-of-keeping-the-right-customers)
-- [IBM – Telco Churn Prediction Use Case](https://www.ibm.com/cloud/learn/telco-churn)
+# 📘 Predictive Analytics Project: Churn Classification
 
 ---
 
-## 🔍 Klarifikasi Masalah
+## 1. 🧭 Domain Proyek
+
+**Latar Belakang:**
+
+Churn merupakan fenomena ketika pelanggan berhenti menggunakan layanan atau produk suatu perusahaan. Dalam industri telekomunikasi, identifikasi pelanggan yang berisiko churn sangat krusial agar perusahaan dapat merancang strategi retensi.
+
+Menurut studi oleh [Gartner Research](https://www.gartner.com/en/newsroom), rata-rata perusahaan kehilangan hingga 10% pelanggannya setiap tahun karena churn. Deteksi churn yang akurat dapat menurunkan biaya akuisisi pelanggan baru dan meningkatkan lifetime value pelanggan yang ada. Oleh karena itu, proyek ini bertujuan membangun model prediksi churn berbasis machine learning.
+
+---
+
+## 2. 💼 Business Understanding
 
 **Problem Statement:**
-Bagaimana cara memprediksi pelanggan yang kemungkinan akan berhenti berlangganan?
+
+Bagaimana cara memprediksi pelanggan yang berpotensi melakukan churn berdasarkan atribut demografis dan penggunaan layanan agar perusahaan dapat mengambil keputusan preventif?
 
 **Goals:**
-1. Membangun model machine learning untuk memprediksi churn.
-2. Menyediakan insight bagi strategi retensi pelanggan.
+
+- Membangun model klasifikasi untuk memprediksi churn pelanggan secara akurat.
+- Meningkatkan f1-score pada kelas churn (label “Yes”) agar deteksi pelanggan yang akan keluar lebih efektif.
+
+**Solution Statement:**
+
+Proyek ini mengusulkan dua pendekatan sebagai solusi:
+
+1. **Baseline Modeling:** Membangun model Logistic Regression dan Random Forest sebagai pembanding awal.
+2. **Advanced Modeling (Improved):** Menerapkan algoritma XGBoost disertai:
+   - Hyperparameter tuning menggunakan GridSearchCV
+   - Penanganan imbalance data dengan SMOTE dan scale_pos_weight
+   - Feature selection menggunakan SelectFromModel
+   - Threshold tuning untuk mengoptimalkan recall dan f1-score pada kelas “Yes”
+
+Seluruh solusi dievaluasi menggunakan metrik yang sesuai dengan konteks data imbalance dan mendukung tujuan bisnis.
 
 ---
 
-## 📂 Informasi Dataset
+## 3. 📊 Data Understanding
 
-- **Sumber:** [Kaggle Dataset – Telco Customer Churn](https://www.kaggle.com/datasets/blastchar/telco-customer-churn)
-- **Versi GitHub:** [CSV File GitHub](https://raw.githubusercontent.com/dannybudiman/Proyek-Predictive-Analytics/main/WA_Fn-UseC_-Telco-Customer-Churn.csv)
-- **Jumlah Baris:** 7043
-- **Format:** CSV
+**Informasi Dataset:**
 
-### 🔎 Daftar Fitur:
+- Jumlah fitur: >20 kolom (numerik dan kategorikal)
+- Jumlah observasi: 7043 data pelanggan
+- Label target: `Churn` (Yes/No)
 
-| Fitur           | Deskripsi                                       |
-|------------------|------------------------------------------------|
-| `customerID`     | ID unik pelanggan                              |
-| `gender`         | Jenis kelamin                                  |
-| `SeniorCitizen`  | Status lansia                                  |
-| `tenure`         | Lama berlangganan (bulan)                      |
-| `Contract`       | Jenis kontrak                                  |
-| `MonthlyCharges` | Biaya bulanan                                  |
-| `TotalCharges`   | Total biaya selama langganan                   |
-| `Churn`          | Target variabel – apakah pelanggan churn atau tidak |
+**Sumber Dataset:**
 
----
+- [Kaggle - Telco Customer Churn Dataset](https://www.kaggle.com/blastchar/telco-customer-churn)
 
-## 🛠️ Teknik Data Preparation
+**Deskripsi Variabel Kunci:**
 
-1. Konversi nilai non-numerik di `TotalCharges`
-2. Hapus missing value
-3. Encoding semua fitur kategorikal menggunakan `LabelEncoder`
-4. Scaling fitur numerik menggunakan `StandardScaler`
-5. Split data menjadi training dan testing
+- `customerID`: ID pelanggan unik
+- `gender`, `SeniorCitizen`, `Partner`, `Dependents`: demografi
+- `tenure`, `MonthlyCharges`, `TotalCharges`: perilaku penggunaan
+- `Contract`, `PaymentMethod`, `InternetService`: jenis layanan
+- `Churn`: Target label (Yes/No)
 
 ---
 
-## 🤖 Modeling
+## 4. 🧹 Data Preparation
 
-- Algoritma: `RandomForestClassifier`
-- Parameter: default + `random_state=42`
+**Teknik dan Urutan yang Dilakukan:**
 
-Langkah:
-1. Training model
-2. Prediksi testing set
-3. Evaluasi model
+1. **Train-test split (stratified)**: Menjaga distribusi churn di data latih dan uji.
+2. **One-hot encoding**: Mengubah variabel kategorikal menjadi numerik agar dapat digunakan oleh algoritma.
+3. **Sinkronisasi fitur**: Menyelaraskan dimensi train dan test dengan `.align(...)`.
+4. **Label Encoding**: Mengonversi target `Churn` menjadi 0 dan 1.
+5. **Standard Scaling**: Normalisasi fitur numerik untuk algoritma yang sensitif terhadap skala.
+6. **SMOTE**: Mengatasi imbalance dengan oversampling kelas “Yes” secara sintetis.
+7. **Feature Selection**: Menggunakan XGBoost untuk memilih fitur relevan saja.
 
-Alternatif: bisa menggunakan `XGBoost` untuk boosting atau `GridSearchCV` untuk tuning parameter.
+**Alasan Tahapan:**
+
+- **Scaling** membantu algoritma seperti Logistic Regression dan XGBoost berkonvergensi lebih cepat.
+- **SMOTE** meningkatkan f1-score dan recall pada kelas minoritas.
+- **Feature selection** mengurangi kompleksitas dan meningkatkan fokus pada atribut bermakna.
 
 ---
 
-## 📈 Evaluasi & Metrik
+## 5. ⚙️ Modeling
 
-- Accuracy
-- Precision
-- Recall
-- F1 Score
-- Confusion Matrix
+**Model yang Dibangun:**
 
-Evaluasi dilakukan dengan `classification_report()` dan `confusion_matrix()` dari scikit-learn. Metrik seperti Recall dan F1 Score sangat relevan untuk kasus imbalance seperti churn prediction.
+- Baseline:
+  - Logistic Regression
+  - Random Forest
+- Model Utama:
+  - XGBoost (Extreme Gradient Boosting)
+
+**Parameter dan Tahapan:**
+
+- Tuning XGBoost:
+  - `GridSearchCV` dengan `StratifiedKFold`
+  - Parameter grid: `n_estimators`, `max_depth`, `learning_rate`, `subsample`
+  - Penanganan imbalance dengan `scale_pos_weight`
+
+**Improvement yang Dilakukan:**
+
+- Pemilihan fitur dengan `SelectFromModel(XGBoost)`
+- Evaluasi probabilistik dengan threshold tuning (default 0.5 → disesuaikan ke 0.4)
+- Fokus peningkatan pada f1-score dan recall kelas “Yes”
+
+**Alasan Pemilihan XGBoost:**
+
+- Menghasilkan performa terbaik dalam hal f1-score dan recall pada kelas churn setelah proses tuning dan balancing.
+- Mendukung eksplorasi feature importance dan seleksi otomatis.
+- Kompatibel dengan data besar dan tidak terlalu rentan terhadap noise hasil one-hot encoding.
+
+---
+
+## 6. 🧪 Evaluation
+
+**Metrik Evaluasi:**
+
+1. **Accuracy**: Proporsi prediksi yang benar dari seluruh data.
+2. **Precision**: Kemampuan model memprediksi churn dengan akurat.
+3. **Recall**: Kemampuan model menangkap pelanggan yang benar-benar churn.
+4. **F1-Score**: Harmoni antara precision dan recall (penting untuk kelas minoritas).
+5. **Confusion Matrix**: Visualisasi distribusi TP, FP, FN, TN
+6. *(Opsional)*: ROC Curve dan Threshold Optimization
+
+**Hasil Model Final (Threshold = 0.4):**
+
+
+**Interpretasi:**
+
+- F1-score kelas “Yes” sebesar 0.60 menunjukkan bahwa model cukup berhasil mendeteksi pelanggan churn.
+- Recall kelas “Yes” sebesar 64% mengindikasikan sekitar 2/3 churn berhasil dikenali.
+- Confusion Matrix menunjukkan model menyeimbangkan prediksi antar kelas dengan cukup baik.
+
+**Formula:**
+
+- `Recall = TP / (TP + FN)`
+- `Precision = TP / (TP + FP)`
+- `F1 = 2 * (Precision * Recall) / (Precision + Recall)`
+
+Model memberikan trade-off yang sehat antara menghindari false positive dan berhasil menangkap churn aktual — cocok untuk intervensi bisnis.
+
+---
+
